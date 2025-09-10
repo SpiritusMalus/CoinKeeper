@@ -1,11 +1,12 @@
 from contextlib import contextmanager
-from sqlalchemy import create_engine
+from sqlalchemy import MetaData, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config.config import DATABASE_URL
 
 from threading import local
 
+metadata = MetaData()
 thread_local = local()
 
 engine = create_engine(
@@ -17,7 +18,7 @@ engine = create_engine(
 
 session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+Base = declarative_base(metadata=metadata)
 
 
 @contextmanager
