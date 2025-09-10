@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="post">
+        <div>
+            <div>Email
+                <input id="reg-email" name="email" type="email" placeholder="example@example.com">
+            </div>
+            <div>Пароль
+                <input id="reg-password" name="password" type="password">
+            </div>
+            <div>Повторите пароль
+                <input id="reg-repeat-password" name="repeat_password" type="password">
+            </div>
+            <div>Имя
+                <input id="reg-first-name" name="first_name" type="text">
+            </div>
+            <div>Фамилия
+                <input id="reg-last-name" name="last_name" type="text">
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

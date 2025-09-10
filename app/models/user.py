@@ -1,8 +1,10 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
-from database import Base
+from app.database import Base
 
 
 class BaseModel(Base):
+    __abstract__ = True
+
     d_create = Column(DateTime(timezone=True), server_default=func.now())
     d_change = Column(DateTime(timezone=True))
 
