@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form method="post">
+    <form action="{{ url_for('post_registration') }}" method="post">
         <div>
             <div>Email
-                <input id="reg-email" name="email" type="email" placeholder="example@example.com">
+                <input id="reg-email" name="email" type="email" required placeholder="example@example.com">
             </div>
             <div>Пароль
-                <input id="reg-password" name="password" type="password">
+                <input id="reg-password" name="password" required type="password">
             </div>
             <div>Повторите пароль
-                <input id="reg-repeat-password" name="repeat_password" type="password">
+                <input id="reg-repeat-password" name="repeat_password" required type="password">
             </div>
             <div>Имя
-                <input id="reg-first-name" name="first_name" type="text">
+                <input id="reg-first-name" name="first_name" required type="text">
             </div>
             <div>Фамилия
-                <input id="reg-last-name" name="last_name" type="text">
+                <input id="reg-last-name" name="last_name" required type="text">
             </div>
         </div>
         <button type="submit">Submit</button>
