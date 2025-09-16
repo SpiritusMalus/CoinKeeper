@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config.config import DATABASE_URL
+from app.config.config import DATABASE_URL
 
 from threading import local
 
