@@ -1,34 +1,34 @@
-from contextlib import contextmanager
-from sqlalchemy import MetaData, create_engine
+from contextlib import asynccontextmanager
+from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config.config import DATABASE_URL
 
 from threading import local
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 metadata = MetaData()
 thread_local = local()
-
-engine = create_engine(
-    DATABASE_URL,
-    pool_size=20,
-    max_overflow=0,
-    echo=True,  # Установите False в production
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )
-
-session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base(metadata=metadata)
 
 
-@contextmanager
-def get_db():
-    db = session()
+@asynccontextmanager
+async def get_db():
+    db = AsyncSessionLocal()
     try:
         yield db
-        db.commit()
+        await db.commit()
     except Exception:
-        db.rollback()
+        await db.rollback()
         raise
     finally:
-        db.close()
+        await db.close()
+
+
+async def get_db_dependency():
+    async with get_db() as db:
+        yield db

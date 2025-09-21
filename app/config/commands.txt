@@ -88,3 +88,11 @@ docker compose logs app
 docker compose exec app bash
 
 https://dockerhosting.ru/my/login.php Тут аренда серва
+
+# Подключиться к контейнеру с БД
+docker-compose exec db psql -U postgres -d postgres
+
+# Выполнить SQL запросы
+\dt  # показать все таблицы
+SELECT * FROM user_auth;  # посмотреть данные пользователей
+\q  # выйти
