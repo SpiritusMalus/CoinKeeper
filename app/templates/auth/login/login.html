@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if after_registration %}
+        Тут написно, что вы зарегистрировались, перед логином проверьте почту для подтверждения
+    {% endif %}
+    <form action="{{ url_for('main_page') }}" method="post">
+        <div>
+            <div>Email
+                <input id="login-email" name="email" type="email" required placeholder="example@example.com">
+            </div>
+            <div>Пароль
+                <input id="login-password" name="password" required type="password">
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    image: coinkeeper-app
+    container_name: app
+    build: ./app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app  # Монтируем папку app в /app контейнера
+      - ./.env:/app/.env 
+    env_file: .env
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+      - redis 
+    
+  db:
+    image: postgres:17.0
+    container_name: db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+
+volumes:
+  postgres_data:
+  redis_data:

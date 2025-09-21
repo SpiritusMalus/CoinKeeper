@@ -1,0 +1,90 @@
+С нуля:
+Создать окружение в проекте:
+1)python -m venv venv
+2).\venv\Scripts\activate
+
+Установки:
+1)Установить Dbeaver; Установить PgAdmins; Установить сервер postgresql с офф сайта; Установить git с офф сайта.
+2)Проблема обнаружения гита компом решает команда: $env:Path += ";C:\Program Files\Git\bin"
+3)Установить окружение python -m venv venv (Если ошибка введи: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser)
+4)pip install -r requirements.txt (в папке где находится requirements.txt)
+5)Конфиг команды для гита взять из офф акка гита 
+6)pip install -e . -> для установки пакетов __init__.py
+
+Если какой-то пункт будет сделан мной - Пропускай
+Запуск сайта(в папке где находится main.py):
+python -m uvicorn main:app --reload 
+ИЛИ
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+
+ALIAS(Для удобства с гитом):
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+
+Подтянуть зависимости:
+pip freeze > requirements.txt (в папке где находится requirements.txt)
+pip install -r requirements.txt (в папке где находится requirements.txt)
+
+Для алембика ПЕРВИЧНО надо:
+1)python -m alembic init -t async migrations -> создаёт папку миграций, ПЕРВИЧНО ДЕЛАЕТСЯ (в папке L2-SERVER)
+2)Идём в alembic.ini и меняем адрес базы данных "sqlalchemy.url = postgresql+asyncpg://%(DB_USER)s:%(DB_PASS)s@%(DB_HOST)s:%(DB_PORT)s/%(DB_NAME)s"
+3)Чтобы подхватил alembic.ini переменные, идём в migrations.env
+
+Добавляем секции и меняем таргет метадату:
+from src.database import Base
+from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+
+config = context.config
+
+section = config.config_ini_section
+config.set_section_option(section, "DB_HOST", DB_HOST)
+config.set_section_option(section, "DB_PORT", DB_PORT)
+config.set_section_option(section, "DB_USER", DB_USER)
+config.set_section_option(section, "DB_NAME", DB_NAME)
+config.set_section_option(section, "DB_PASS", DB_PASS)
+
+target_metadata = Base.metadata
+
+4)Миграция:
+ЕСЛИ ОШИБКА :
+ File "D:\L2-SERVER\migrations\env.py", line 9, in <module>
+    from src.database import Base
+  File "D:\L2-SERVER\src\database.py", line 14, in <module>
+    from config import DB_USER, DB_HOST, DB_NAME, DB_PASS, DB_PORT
+ModuleNotFoundError: No module named 'config'
+
+ГДЕ КОНФИГ ДОБАВИТЬ src.config
+ГДЕ src.database ВОЗМОЖНО УБРАТЬ src
+ПОТОМ ВСЁ ВЕРНУТЬ.
+АЛЕМБИК ПОЧЕМУ-ТО ВИДИТ ОДИН ПУТЬ, А ЮВИКОРН ДРУГОЙ.
+
+(--autogenerate - Сравнивает текущее состояние в базе и применит изменения)
+(-m "Initial" - Дать название коммиту в базу)
+python3 -m alembic revision --autogenerate -m "Database creation"
+python3 -m alembic upgrade head
+
+DOCKER:
+# Собрать и запустить в фоновом режиме
+docker compose up -d --build
+
+# Просмотр логов
+docker compose logs -f
+
+# Остановить все сервисы
+docker compose down
+
+# Остановить с удалением volumes (осторожно!)
+docker compose down -v
+
+# Проверить статус контейнеров
+docker compose ps
+
+# Посмотреть логи приложения
+docker compose logs app
+
+# Войти в контейнер приложения
+docker compose exec app bash
+
+https://dockerhosting.ru/my/login.php Тут аренда серва
