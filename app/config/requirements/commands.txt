@@ -86,3 +86,5 @@ docker compose logs app
 
 # Войти в контейнер приложения
 docker compose exec app bash
+
+https://dockerhosting.ru/my/login.php Тут аренда серва

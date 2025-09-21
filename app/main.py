@@ -4,10 +4,10 @@ import uuid
 from fastapi import Depends, FastAPI, Form, Request
 from passlib.context import CryptContext
 import redis
-from app.config.config import REDIS_HOST, REDIS_PORT
-from app.database import get_db
-from app.models.user import User
-from app.schemas.schema import UserLogin, UserRegistration
+from config.config import REDIS_HOST, REDIS_PORT
+from database import get_db
+from models.user import User
+from schemas.schema import UserLogin, UserRegistration
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
