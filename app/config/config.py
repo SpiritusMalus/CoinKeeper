@@ -9,6 +9,11 @@ MAIN_URL = os.environ.get("MAIN_URL")
 
 ### DATABASE
 DATABASE_URL = os.environ.get("DATABASE_URL")
+DB_HOST = os.environ.get("DB_HOST", "db")
+DB_PORT = os.environ.get("DB_PORT", "5432")
+DB_NAME = os.environ.get("DB_NAME")
+DB_USER = os.environ.get("DB_USER")
+DB_PASS = os.environ.get("DB_PASS")
 
 ### COOKIE
 LOGIN_TO_ACCOUNT = os.environ.get("LOGIN_TO_ACCOUNT")

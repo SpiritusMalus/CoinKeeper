@@ -2,44 +2,43 @@ version: '3.8'
 
 services:
   app:
-    image: coinkeeper-app
-    container_name: app
-    build: ./app
+    build: .
+    container_name: coinkeeper-app
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app  # Монтируем папку app в /app контейнера
-      - ./.env:/app/.env 
+      - ./app:/app  # Монтируем папку app
+      - ./alembic.ini:/app/alembic.ini  # Монтируем alembic.ini отдельно
     env_file: .env
+    environment:
+      - PYTHONPATH=/app
+      - DB_HOST=db  # Явно указываем хост БД
     restart: unless-stopped
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - db
-      - redis 
+      - redis
     
   db:
     image: postgres:17.0
-    container_name: db
+    container_name: coinkeeper-db
     env_file: .env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Это должно быть!
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
   
   redis:
     image: redis:7-alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
+    container_name: coinkeeper-redis
     volumes:
       - redis_data:/data
     restart: unless-stopped
-    command: redis-server --save 60 1 --loglevel warning
 
 volumes:
   postgres_data:
