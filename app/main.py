@@ -2,10 +2,11 @@ from fastapi import Depends, FastAPI, Form, Request
 from passlib.context import CryptContext
 import redis
 from sqlalchemy.ext.asyncio import AsyncSession
-from config.config import REDIS_HOST, REDIS_PORT
+from services.email.smtp_service import EmailSmtpService
+from config.config import REDIS_HOST, REDIS_PORT, EMAIL_ADDRESS
 from database import get_db_dependency
 from models.user import User
-from schemas.schema import UserLogin, UserRegistration
+from schemas.user_schema import UserLogin, UserRegistration
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -60,16 +61,30 @@ async def post_registration(
 
     hashed_password = pwd_context.hash(form_data.password)
 
-    new_user = User(
-        first_name=form_data.first_name,
-        last_name=form_data.last_name,
-        email=form_data.email,
-        hashed_password=hashed_password,
+    db.add(
+        User(
+            first_name=form_data.first_name,
+            last_name=form_data.last_name,
+            email=form_data.email,
+            hashed_password=hashed_password,
+        )
     )
 
-    db.add(new_user)
+    with open(
+        "./templates/auth/registration/accept_registration.html", "r", encoding="utf-8"
+    ) as file:
+        html_content = file.read()
+    print(199)
+    await EmailSmtpService().send_email(
+        sender=EMAIL_ADDRESS,
+        to_email=email,
+        subject="Подтверждение регистрации CoinKeeper",
+        body=html_content,
+        is_html=True,
+    )
+    print(12311)
 
-    return RedirectResponse("/login/", status_code=303)
+    return RedirectResponse("/login/", status_code=303)  ### ВЫНЕСТИ ВСЁ В КЛАСС + DI
 
 
 @app.get("/login/")
