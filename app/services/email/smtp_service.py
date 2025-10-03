@@ -36,10 +36,8 @@ class EmailSmtpService:
                 await smtp.send_message(message)
 
             logger.info(f"Email sent successfully to {to_email}")
-            print(12312)
             return True
 
         except Exception as e:
-            print(f"Email error: {e}")
             logger.error(f"Error sending email: {str(e)}")
             return False

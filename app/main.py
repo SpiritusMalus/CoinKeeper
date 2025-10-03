@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, Form, Request
 from passlib.context import CryptContext
 import redis
 from sqlalchemy.ext.asyncio import AsyncSession
+from services.email.imap_service import EmailImapService
 from services.email.smtp_service import EmailSmtpService
 from config.config import REDIS_HOST, REDIS_PORT, EMAIL_ADDRESS
 from database import get_db_dependency
@@ -29,6 +30,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
+    await EmailImapService().load_emails()
     return templates.TemplateResponse(
         "index.html", {"request": request, "title": "CoinKeeper - Главная"}
     )
@@ -74,7 +76,6 @@ async def post_registration(
         "./templates/auth/registration/accept_registration.html", "r", encoding="utf-8"
     ) as file:
         html_content = file.read()
-    print(199)
     await EmailSmtpService().send_email(
         sender=EMAIL_ADDRESS,
         to_email=email,
@@ -82,7 +83,6 @@ async def post_registration(
         body=html_content,
         is_html=True,
     )
-    print(12311)
 
     return RedirectResponse("/login/", status_code=303)  ### ВЫНЕСТИ ВСЁ В КЛАСС + DI
 
