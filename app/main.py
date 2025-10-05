@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI, Form, Request
 from passlib.context import CryptContext
 import redis
+from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.email.imap_service import EmailImapService
 from services.email.smtp_service import EmailSmtpService
@@ -46,12 +47,13 @@ async def get_registration_page(request: Request):
 
 @app.post("/registration/")
 async def post_registration(
+    request: Request,
+    db: AsyncSession = Depends(get_db_dependency),
     first_name: str = Form(...),
     last_name: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
     repeat_password: str = Form(...),
-    db: AsyncSession = Depends(get_db_dependency),
 ) -> "RedirectResponse":
     form_data = UserRegistration(
         first_name=first_name,
@@ -62,6 +64,24 @@ async def post_registration(
     )
 
     hashed_password = pwd_context.hash(form_data.password)
+
+    exists_query = select(exists().where(User.email == form_data.email))
+    result = await db.execute(exists_query)
+    user_exists = result.scalar()
+
+    if user_exists:
+        return templates.TemplateResponse(
+            "auth/registration/registration.html",
+            {
+                "request": request,
+                "data": {
+                    "first_name": form_data.first_name,
+                    "last_name": form_data.last_name,
+                    "email": form_data.email,
+                },
+                "error": "Пользователь с таким email уже существует",
+            },
+        )
 
     db.add(
         User(
@@ -76,6 +96,7 @@ async def post_registration(
         "./templates/auth/registration/accept_registration.html", "r", encoding="utf-8"
     ) as file:
         html_content = file.read()
+
     await EmailSmtpService().send_email(
         sender=EMAIL_ADDRESS,
         to_email=email,
