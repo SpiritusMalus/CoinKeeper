@@ -41,7 +41,7 @@ async def main_page(request: Request):
 async def get_registration_page(request: Request):
     return templates.TemplateResponse(
         "auth/registration/registration.html",
-        {"request": request, "title": "CoinKeeper - Регистрация"},
+        {"request": request, "data": {}, "title": "CoinKeeper - Регистрация"},
     )
 
 
