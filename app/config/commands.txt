@@ -90,7 +90,7 @@ docker compose exec app bash
 https://dockerhosting.ru/my/login.php Тут аренда серва
 
 # Подключиться к контейнеру с БД
-docker-compose exec db psql -U postgres -d postgres
+docker compose exec db psql -U postgres -d postgres
 
 # Выполнить SQL запросы
 \dt  # показать все таблицы

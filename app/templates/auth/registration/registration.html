@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 
+{% block js %}
+    {{ super() }}
+    <script src="/static/registration/registration.js"></script>
+{% endblock %}
+
 {% block content %}
     <form action="{{ url_for('post_registration') }}" method="post">
         <div>
             <div>Email
-                <input id="reg-email" name="email" type="email" required placeholder="example@example.com">
+                <input id="reg-email" name="email" type="email" required placeholder="example@example.com" value="{{ data['email'] }}">
+                <div id="email-error"></div>
             </div>
             <div>Пароль
-                <input id="reg-password" name="password" required type="password">
+                <input id="reg-password" name="password" required type="password" onfocusout="showRepeatPassError()">
+                <div id="pass-error"></div>
             </div>
             <div>Повторите пароль
-                <input id="reg-repeat-password" name="repeat_password" required type="password">
+                <input id="repeat-reg-password" name="repeat_password" required type="password">
+                <div id="repeat-pass-error"></div>
             </div>
             <div>Имя
-                <input id="reg-first-name" name="first_name" required type="text">
+                <input id="reg-first-name" name="first_name" required type="text" value="{{ data['first_name'] }}">
             </div>
             <div>Фамилия
-                <input id="reg-last-name" name="last_name" required type="text">
+                <input id="reg-last-name" name="last_name" required type="text" value="{{ data['last_name'] }}">
             </div>
         </div>
-        <button type="submit">Submit</button>
+        <button id="reg-submit" type="submit">Зарегистрироваться</button>
     </form>
 {% endblock %}

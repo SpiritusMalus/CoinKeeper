@@ -13,7 +13,7 @@ class User(BaseModel):
     __tablename__ = "user_auth"
 
     id = Column(Integer, primary_key=True, index=True)
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=False)
     email = Column(String, unique=True, index=True, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
